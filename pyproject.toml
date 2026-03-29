@@ -1,12 +1,12 @@
 [project]
 name = "chatbot-agent-resource"
 version = "0.1.0"
-description = "Add your description here"
+description = "Bhagavad Gita Q&A chat UI (Gradio) using local Ollama"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "gradio>=6.10.0",
-    "openai>=2.30.0",
+    "ollama>=0.4.0",
     "pypdf>=6.9.2",
     "python-dotenv>=1.2.2",
 ]

@@ -1,10 +1,15 @@
+import os
+
 from dotenv import load_dotenv
-from openai import OpenAI
-from pypdf import PdfReader
 import gradio as gr
+import ollama
+from pypdf import PdfReader
+
 load_dotenv(override=True)
 
-openai = OpenAI()
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
+_ollama = ollama.Client(host=OLLAMA_HOST)
 reader = PdfReader("bhagavad-gita-in-english-source-file.pdf")
 gita = ""
 for page in reader.pages:
@@ -26,13 +31,13 @@ Ground every answer in the English source text below. When responding:
 """
 
 def chat(message, history):
-    # history is prior turns only (OpenAI-style dicts); message is the new user input (Gradio ChatInterface).
+    # history is prior turns only (role/content dicts); message is the new user input (Gradio ChatInterface).
     prior = [{"role": m["role"], "content": m["content"]} for m in history if m.get("content")]
     messages = [{"role": "system", "content": system_prompt}] + prior + [
         {"role": "user", "content": message}
     ]
-    response = openai.chat.completions.create(model="gpt-4o-mini", messages=messages)
-    return response.choices[0].message.content
+    response = _ollama.chat(model=OLLAMA_MODEL, messages=messages)
+    return response["message"]["content"]
 
 
 if __name__ == "__main__":
